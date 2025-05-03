@@ -7,26 +7,44 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function deleteCategory(Category $category){
-        $category->delete();
+
+    public function manageCategory(){
+        $categories = Category::orderby('id','DESC')->paginate(20);
+        $parent_categories = Category::where("category_id",NULL)->get();
+        return view("admin.manageCategory",compact("categories","parent_categories"));
+    }
+    
+    public function createCategory(Request $request){
+    $request->validate([
+        'cat_title' => 'required|string|max:255',
+    ]);
+    Category::create([
+        'cat_title' => $request->cat_title,
+        'cat_description' => $request->cat_description,
+        'category_id'=> $request->category_id,
+    ]);
+    return redirect()->route('admin.manageCategory')->with('success','Category created successfully');
+    }
+
+    public function deleteCategory(Request $request, $id){
+        $data = Category::find($id);
+        $data->delete();
         
-       return redirect()->route('admin.manageCategory')->with('success', 'Category deleted successfully.');
+       return redirect()->back()->with('delete_success', 'Category deleted successfully.');
     }
 
-    public function editForm(Category $category){
-        $categories = Category::where('id', '!=', $category->id)->get(); 
-return view('components.edits', compact('category', 'categories'));
 
-    }
-
-    public function updateData(Request $req, $s){
-$data = $req->validate([
-'cat_title'=> 'required|string|max:255',
-'cat_description'=>'required|string'
-]);
-
-$data = Category::find($s)->update($data);
+    public function updateData(Request $request, $id){
+        $request->validate([
+            'cat_title' => 'required|string|max:255',
+        ]);
+        Category::find($id)->update([
+            'cat_title' => $request->cat_title,
+            'cat_description' => $request->cat_description,
+            'category_id'=> $request->category_id,
+        ]);
 
 return redirect()->route('admin.manageCategory')->with('success','Category updated successfully.');
     }
+
 }

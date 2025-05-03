@@ -15,9 +15,7 @@ class Category extends Model
     public function parent(){
         return $this->hasOne(Category::class,'id','category_id');
         //the above line says: This category belongs to one parent category
-        //Category::class → It’s linking to the Category model itself (self-relationship)
-//id - This is the primary key of the parent category
-//category_id - This is the foreign key in the current category
+       
     }
 
     public function catTitle():Attribute{
@@ -30,8 +28,6 @@ class Category extends Model
     public function products(){
         return $this->hasMany(Product::class,"category_id","id");
         //the above line says: "One Category can have many Products" 
-        //Product::class - we’re connecting to the Product model
-        //category_id - the foreign key in the products table (it refers to the category)
-        //id - primary key of the category table
+        
     }
 }

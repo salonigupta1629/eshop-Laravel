@@ -10,7 +10,8 @@ class ProductController extends Controller
 {
     public function index(){
         $products = Product::orderby("id","DESC")->paginate(10);
-        return view('admin.manageProducts', compact("products"));
+        $categories = Category::orderBy("id", "DESC")->get();
+        return view('admin.manageProducts', compact("products","categories"));
     }
     public function insert(){
         $categories = Category::orderby("id","DESC")->get();
@@ -47,36 +48,45 @@ return redirect()->route('admin.manageProduct');
     }
 
     
-    public function deleteProduct(Product $product){
-$product->delete();
+    public function deleteProduct(Request $request, $id){
+$data = Product::find($id);
+$data->delete();
 
-session()->flash('delete_success','Product deleted successfully!.');
-return redirect()->route('admin.manageProduct')->with("sucess","Product deleted successfully.");
+return redirect()->back()->with("delete_success","Product deleted successfully.");
     }
     
 
-    public function editForm(Product $product){
-        $categories = Category::orderby("id", "DESC")->get();
-return view('components.edit',compact('product','categories'));
-    }
+//     public function editForm(Product $product){
+//         $categories = Category::orderby("id", "DESC")->get();
+// return view('components.edit',compact('product','categories'));
+//     }
 
 
 
-    public function updateData(Request $req, $id)
-{
-    $req->validate([
+    public function updateData(Request $request, $id){
+    $request->validate([
         'title'=>'required|string|max:255',
         'price'=>'required|numeric',
-        'discount_price'=>'nullable|numeric',
+        'discount_price'=>'numeric',
+        'image'=>'required|image|mimes:jpeg,png,jpg,gifsvg|max:2048',
         'brand'=>'required|string|max:255',
         'description'=>'required|string',
         'category_id'=>'required|exists:categories,id',
-        'image'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    ]);
-
-  
-
-    $product->update($data);
+        ]);
+        
+        //image
+        $imageName = time().'.' . $request->image->extension();
+        $request->image->move(public_path('images'), $imageName);
+        
+        Product::find($id)->update([
+            'title'=> $request->title,
+            'price'=> $request->price,
+            'discount_price'=> $request->discount_price,
+            'brand'=> $request->brand,
+            'description'=> $request->description,
+            'category_id'=> $request->category_id,
+            'image' => $imageName,
+        ]);
 
     return redirect()->route('admin.manageProduct')->with('success', 'Product updated successfully.');
 }
