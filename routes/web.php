@@ -1,13 +1,25 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/',[HomeController::class,'home'])->name('homepage');
-Route::get('/login',[HomeController::class,'login'])->name('login');
+
+//home routes
+Route::controller(HomeController::class)->group(function(){
+    Route::get('/','home')->name('homepage');
+    Route::get('/search','search')->name('search');
+    Route::get('/filter/{catId}','filter')->name('filter');
+
+});
+
+
+//auth routes
+Route::match(['get','post'],'/login',[AuthController::class,'login'])->name('login');
+Route::match(['get','post'],'/register',[AuthController::class,'register'])->name('register');
 
 
 Route::prefix("admin")->group(function(){

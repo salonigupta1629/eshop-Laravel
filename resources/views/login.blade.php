@@ -8,7 +8,11 @@
     <div class="card">
         <div class="card-header">Login Here</div>
             <div class="card-body">
-                <form action="" method="post">
+                @session('delete_success')
+<p>{{$message}}</p>
+                @endsession
+                <form action="{{route('login')}}" method="post">
+                    @csrf
 <div class="mb-3">
     <label for="">Email</label>
     <input type="text" name="email" placeholder="e.g. abc@gmail.com" class="input form-control" />
@@ -21,6 +25,9 @@
     <input type="submit" name="login" class="btn btn-dark w-100" />
 </div>
 </form>
+<div class='text-center mt-3'>
+<p class='mb-0'>Don't have an account? <a href="{{route('register')}}" class='text-primary'>Create an account</a></p>
+</div>
             </div>
         <!-- </div> -->
     </div>

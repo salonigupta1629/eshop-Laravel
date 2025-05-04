@@ -16,16 +16,22 @@
         <a href="" class="navbar-brand" >{{env("APP_NAME")}}</a>
 
         <!-- search -->
-         <form action="" method="post" class="d-flex">
-<input type="text" size="80" placeholder="Search here" class="form-control" />
+         <form action="{{route('search')}}" method="GET" class="d-flex">
+            @csrf
+<input type="text" name="search" size="80" placeholder="Search here" class="form-control" />
 <input type="submit" class="btn btn-dark" value="Go" />
 </form>
 
 <!-- links -->
  <div class="navbar nav">
     <a href="{{ route('homepage') }}" class="nav-item nav-link text-white">Home</a>
+    @auth
+<span class='texxt-white nav-link'>{{auth()->user()->name}}</span>
+    @else
     <a href="{{ route('login') }}" class="nav-item nav-link text-white">Login</a>
-    <a href="" class="nav-item nav-link text-white">Register</a>
+
+    @endauth
+    <a href="{{route('register')}}" class="nav-item nav-link text-white">Register</a>
     <a href="" class="btn btn-light">Cart</a>
  </div>
     </div>

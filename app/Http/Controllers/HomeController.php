@@ -16,7 +16,18 @@ class HomeController extends Controller
         return view("home",compact("products","categories"));
     }
 
-    public function login(){
-        return view("login");
+    public function search(Request $req){
+$search = $req->search;
+$products = Product::whereLike('title','%$search%')->paginate(50);
+$categories = Category::where('category_id',NULL)->get();
+return view('home',compact('products','categories'));
     }
+
+    public function filter($catId){
+$products = Product::where('category_id','$catId')->paginate(50);
+$categories = Category::where('category_id',NULL)->get();
+return view('home',compact('products','categories'));
+    }
+
+    
 }
